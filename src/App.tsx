@@ -7,7 +7,7 @@ import { ThemePreview } from './components/ThemePreview'
 import { ExportPanel } from './components/ExportPanel'
 
 function App() {
-  const { state, dispatch, getActiveAssignments } = useThemeMapping()
+  const { state, dispatch } = useThemeMapping()
 
   const lightResolved = useMemo(
     () => resolveAllRoles(

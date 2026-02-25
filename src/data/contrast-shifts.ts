@@ -1,4 +1,4 @@
-import type { M3RoleName, ShadeRef, ContrastLevel } from '../types'
+import type { ShadeRef, ContrastLevel } from '../types'
 
 interface RoleToneSpec {
   palette: 'accent' | 'neutral'

@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react'
 import type { AppState, AppAction, ContrastLevel, M3RoleName, RoleAssignments } from '../types'
 import { M3_ROLE_FAMILIES, getRolesByFamily } from '../data/m3-roles'
 import { resolveShadeRef } from '../lib/palette'
-import { contrastRatio } from '../lib/contrast'
 import { ContrastBadge } from './ContrastBadge'
 import { ShadeSelector } from './ShadeSelector'
 
@@ -17,11 +16,6 @@ function getAssignments(state: AppState, contrastLevel: ContrastLevel, themeMode
   return state.themeMapping.highContrast[themeMode]
 }
 
-function textColor(hex: string): string {
-  const ratio = contrastRatio(hex, '#ffffff')
-  return ratio >= 4.5 ? '#ffffff' : '#000000'
-}
-
 const CONTRAST_TABS: { label: string; value: ContrastLevel }[] = [
   { label: 'Standard', value: 'standard' },
   { label: 'Medium', value: 'medium' },
@@ -32,7 +26,7 @@ export function MappingTable({ state, dispatch }: MappingTableProps) {
   const [collapsedFamilies, setCollapsedFamilies] = useState<Set<string>>(new Set())
   const [openSelector, setOpenSelector] = useState<{ role: M3RoleName; themeMode: 'light' | 'dark' } | null>(null)
 
-  const { activeContrastLevel, activeThemeMode, paletteConfig } = state
+  const { activeContrastLevel, paletteConfig } = state
 
   const lightAssignments = useMemo(
     () => getAssignments(state, activeContrastLevel, 'light'),

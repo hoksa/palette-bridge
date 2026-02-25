@@ -33,3 +33,8 @@ export function meetsWCAG(ratio: number): WCAGLevel {
   if (ratio >= 3) return 'AA-large'
   return 'fail'
 }
+
+export function textColor(hex: string): string {
+  const ratio = contrastRatio(hex, '#ffffff')
+  return ratio >= 4.5 ? '#ffffff' : '#000000'
+}

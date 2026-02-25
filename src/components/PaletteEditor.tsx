@@ -1,5 +1,5 @@
 import type { PaletteConfig } from '../types'
-import { contrastRatio } from '../lib/contrast'
+import { textColor } from '../lib/contrast'
 
 interface PaletteEditorProps {
   paletteConfig: PaletteConfig
@@ -7,11 +7,6 @@ interface PaletteEditorProps {
 
 const PALETTE_ORDER = ['primary', 'secondary', 'tertiary', 'error', 'neutral'] as const
 const SHADE_ORDER = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950']
-
-function textColor(hex: string): string {
-  const ratio = contrastRatio(hex, '#ffffff')
-  return ratio >= 4.5 ? '#ffffff' : '#000000'
-}
 
 export function PaletteEditor({ paletteConfig }: PaletteEditorProps) {
   return (

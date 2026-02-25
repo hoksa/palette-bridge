@@ -1,4 +1,4 @@
-import type { PaletteConfig, ThemeMapping, RoleAssignments, M3RoleName } from '../types'
+import type { PaletteConfig, ThemeMapping, RoleAssignments } from '../types'
 import { resolveShadeRef } from '../lib/palette'
 import { ALL_M3_ROLES } from '../data/m3-roles'
 
