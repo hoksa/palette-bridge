@@ -4,6 +4,7 @@ import { resolveAllRoles } from './lib/palette'
 import { PaletteEditor } from './components/PaletteEditor'
 import { MappingTable } from './components/MappingTable'
 import { ThemePreview } from './components/ThemePreview'
+import { ExportPanel } from './components/ExportPanel'
 
 function App() {
   const { state, dispatch, getActiveAssignments } = useThemeMapping()
@@ -74,6 +75,9 @@ function App() {
             <ThemePreview resolvedColors={darkResolved} themeMode="dark" />
           </div>
         </div>
+
+        {/* Export panel */}
+        <ExportPanel state={state} dispatch={dispatch} />
       </main>
     </div>
   )
