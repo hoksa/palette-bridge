@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import { useThemeMapping } from './hooks/useThemeMapping'
 import { resolveAllRoles } from './lib/palette'
 import { PaletteEditor } from './components/PaletteEditor'
@@ -32,6 +32,23 @@ function App() {
     ),
     [state],
   )
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      // Skip if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      switch (e.key) {
+        case '1': dispatch({ type: 'SET_CONTRAST_LEVEL', payload: 'standard' }); break
+        case '2': dispatch({ type: 'SET_CONTRAST_LEVEL', payload: 'medium' }); break
+        case '3': dispatch({ type: 'SET_CONTRAST_LEVEL', payload: 'high' }); break
+        case 'l': case 'L': dispatch({ type: 'SET_THEME_MODE', payload: 'light' }); break
+        case 'd': case 'D': dispatch({ type: 'SET_THEME_MODE', payload: 'dark' }); break
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [dispatch])
 
   return (
     <div className="min-h-screen bg-gray-50">
