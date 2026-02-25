@@ -1,4 +1,4 @@
-import type { PaletteConfig, ThemeMapping, M3RoleName } from '../types'
+import type { PaletteConfig, ThemeMapping } from '../types'
 import { resolveShadeRef } from './palette'
 import { KOTLIN_COLOR_SCHEME_ROLES } from '../data/m3-roles'
 

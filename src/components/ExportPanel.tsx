@@ -59,16 +59,34 @@ export function ExportPanel({ state, dispatch }: ExportPanelProps) {
     fileInputRef.current?.click()
   }
 
+  function isValidAppState(value: unknown): value is AppState {
+    if (typeof value !== 'object' || value === null) return false
+    const obj = value as Record<string, unknown>
+    if (typeof obj.paletteConfig !== 'object' || obj.paletteConfig === null) return false
+    if (typeof obj.themeMapping !== 'object' || obj.themeMapping === null) return false
+    if (!['standard', 'medium', 'high'].includes(obj.activeContrastLevel as string)) return false
+    if (!['light', 'dark'].includes(obj.activeThemeMode as string)) return false
+    if (typeof obj.interpolationEnabled !== 'boolean') return false
+    const mapping = obj.themeMapping as Record<string, unknown>
+    if (typeof mapping.light !== 'object' || typeof mapping.dark !== 'object') return false
+    if (typeof mapping.mediumContrast !== 'object' || typeof mapping.highContrast !== 'object') return false
+    return true
+  }
+
   function handleFileImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => {
       try {
-        const imported = JSON.parse(reader.result as string) as AppState
-        dispatch({ type: 'LOAD_STATE', payload: imported })
+        const parsed: unknown = JSON.parse(reader.result as string)
+        if (!isValidAppState(parsed)) {
+          alert('Invalid mapping file: missing or malformed fields')
+          return
+        }
+        dispatch({ type: 'LOAD_STATE', payload: parsed })
       } catch {
-        alert('Invalid mapping file')
+        alert('Invalid mapping file: not valid JSON')
       }
     }
     reader.readAsText(file)

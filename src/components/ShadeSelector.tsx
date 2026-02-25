@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import type { PaletteConfig } from '../types'
-import { contrastRatio } from '../lib/contrast'
+import { textColor } from '../lib/contrast'
 
 interface ShadeSelectorProps {
   paletteConfig: PaletteConfig
@@ -12,11 +12,6 @@ interface ShadeSelectorProps {
 
 const SHADE_ORDER = ['white', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950', 'black']
 const PALETTE_ORDER = ['primary', 'secondary', 'tertiary', 'error', 'neutral'] as const
-
-function textColor(hex: string): string {
-  const ratio = contrastRatio(hex, '#ffffff')
-  return ratio >= 4.5 ? '#ffffff' : '#000000'
-}
 
 export function ShadeSelector({ paletteConfig, currentPalette, currentShade, onSelect, onClose }: ShadeSelectorProps) {
   const ref = useRef<HTMLDivElement>(null)

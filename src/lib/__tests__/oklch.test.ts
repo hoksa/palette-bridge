@@ -3,13 +3,13 @@ import { hexToOklch, oklchToHex, interpolateOklch, generateIntermediateNeutrals 
 
 describe('hexToOklch', () => {
   it('converts white', () => {
-    const [l, c, h] = hexToOklch('#ffffff')
+    const [l, c] = hexToOklch('#ffffff')
     expect(l).toBeCloseTo(1, 1)
     expect(c).toBeCloseTo(0, 2)
   })
 
   it('converts black', () => {
-    const [l, c, h] = hexToOklch('#000000')
+    const [l] = hexToOklch('#000000')
     expect(l).toBeCloseTo(0, 1)
   })
 })
