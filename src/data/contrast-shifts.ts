@@ -1,3 +1,17 @@
+/**
+ * M3 Color Role → Tailwind Shade assignment tables.
+ *
+ * Every shade value in this file derives from a positional correspondence
+ * between M3's tonal palette (0–100, dark-to-light) and Tailwind's shade
+ * scale (50–950, light-to-dark). For example, M3 tone 40 maps to Tailwind
+ * shade 600 because both sit at ~60% of their respective scales.
+ *
+ * The M3 tone for each role comes from the Material Design 3 source code's
+ * ContrastCurve definitions. Contrast levels (standard/medium/high) shift
+ * these tones, which are then resolved to the nearest Tailwind shade.
+ *
+ * Full rationale and correspondence table: docs/tone-shade-mapping.md
+ */
 import type { ShadeRef, ContrastLevel } from '../types'
 
 interface RoleToneSpec {

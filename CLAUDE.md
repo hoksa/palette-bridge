@@ -56,3 +56,4 @@ Hex (sRGB) → OKLCH interpolation for shade generation → WCAG contrast ratios
 - **Contrast levels**: Standard, Medium, High — each with independent shade mappings
 - **Theme modes**: Light and Dark with separate role assignments
 - **Export formats**: Kotlin (Color.kt + Theme.kt), Material JSON, Tokens Studio (DTCG), CSS custom properties
+- **Tone-shade mapping**: See `docs/tone-shade-mapping.md` for the foundational logic mapping M3 tonal values to Tailwind shades — this drives all default role assignments in `src/data/contrast-shifts.ts`
