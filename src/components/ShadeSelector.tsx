@@ -1,60 +1,47 @@
-import { useRef, useEffect } from 'react'
 import type { PaletteConfig } from '../types'
 import { textColor } from '../lib/contrast'
+import { Button } from '@/components/ui/button'
 
 interface ShadeSelectorProps {
   paletteConfig: PaletteConfig
   currentPalette: string
   currentShade: string
   onSelect: (palette: string, shade: string) => void
-  onClose: () => void
 }
 
 const SHADE_ORDER = ['white', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950', 'black']
 const PALETTE_ORDER = ['primary', 'secondary', 'tertiary', 'error', 'neutral'] as const
 
-export function ShadeSelector({ paletteConfig, currentPalette, currentShade, onSelect, onClose }: ShadeSelectorProps) {
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        onClose()
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [onClose])
-
+export function ShadeSelector({ paletteConfig, currentPalette, currentShade, onSelect }: ShadeSelectorProps) {
   return (
-    <div
-      ref={ref}
-      className="absolute z-50 bg-white rounded-lg shadow-xl border border-gray-200 p-3 min-w-[280px]"
-    >
-      <div className="text-xs font-semibold text-gray-500 mb-2">Select shade</div>
+    <div className="space-y-2">
+      <div className="text-xs font-semibold text-muted-foreground">Select shade</div>
       {PALETTE_ORDER.map(paletteName => {
         const palette = paletteConfig.palettes[paletteName]
         if (!palette) return null
         return (
-          <div key={paletteName} className="mb-2">
-            <div className="text-[10px] font-medium text-gray-400 capitalize mb-0.5">{paletteName}</div>
+          <div key={paletteName}>
+            <div className="text-[10px] font-medium text-muted-foreground capitalize mb-0.5">{paletteName}</div>
             <div className="flex gap-0.5 flex-wrap">
               {SHADE_ORDER.map(shade => {
                 const sv = palette.shades[shade]
                 if (!sv) return null
                 const isSelected = paletteName === currentPalette && shade === currentShade
                 return (
-                  <button
+                  <Button
                     key={shade}
-                    onClick={() => { onSelect(paletteName, shade); onClose() }}
-                    className={`w-7 h-7 rounded text-[8px] font-mono flex items-center justify-center transition-all ${
-                      isSelected ? 'ring-2 ring-blue-500 ring-offset-1 scale-110' : 'hover:scale-105'
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onSelect(paletteName, shade)}
+                    className={`w-7 h-7 p-0 text-[8px] font-mono ${
+                      isSelected ? 'ring-2 ring-ring ring-offset-1 scale-110' : 'hover:scale-105'
                     }`}
                     style={{ backgroundColor: sv.hex, color: textColor(sv.hex) }}
-                    title={`${paletteName}-${shade}: ${sv.hex}`}
+                    aria-label={`${paletteName} ${shade}: ${sv.hex}`}
+                    aria-pressed={isSelected}
                   >
                     {shade === 'white' ? 'W' : shade === 'black' ? 'B' : shade}
-                  </button>
+                  </Button>
                 )
               })}
             </div>

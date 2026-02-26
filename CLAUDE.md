@@ -38,7 +38,7 @@ Hex (sRGB) → OKLCH interpolation for shade generation → WCAG contrast ratios
 
 - TypeScript 5.9 (strict), React 19, Vite 7, Tailwind CSS 4
 - Vitest for tests, ESLint 9 flat config
-- Zero runtime dependencies beyond React + Tailwind
+- shadcn/ui (Radix primitives, tailwind-merge, clsx, class-variance-authority) for accessible UI components
 
 ## Conventions
 

@@ -1,15 +1,21 @@
 import { contrastRatio, meetsWCAG } from '../lib/contrast'
+import { Badge } from '@/components/ui/badge'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 interface ContrastBadgeProps {
   fgHex: string
   bgHex: string
 }
 
-const LEVEL_STYLES: Record<string, string> = {
-  'AAA': 'bg-green-100 text-green-800 border-green-300',
-  'AA': 'bg-green-50 text-green-700 border-green-200',
-  'AA-large': 'bg-yellow-50 text-yellow-700 border-yellow-300',
-  'fail': 'bg-red-50 text-red-700 border-red-300',
+const LEVEL_VARIANTS: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+  'AAA': 'default',
+  'AA': 'secondary',
+  'AA-large': 'outline',
+  'fail': 'destructive',
 }
 
 export function ContrastBadge({ fgHex, bgHex }: ContrastBadgeProps) {
@@ -17,12 +23,16 @@ export function ContrastBadge({ fgHex, bgHex }: ContrastBadgeProps) {
   const level = meetsWCAG(ratio)
 
   return (
-    <span
-      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono border ${LEVEL_STYLES[level]}`}
-      title={`${fgHex} on ${bgHex}`}
-    >
-      <span className="font-semibold">{ratio.toFixed(1)}:1</span>
-      <span className="opacity-75">{level}</span>
-    </span>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Badge variant={LEVEL_VARIANTS[level]} className="font-mono text-[10px] gap-1 cursor-default">
+          <span className="font-semibold">{ratio.toFixed(1)}:1</span>
+          <span className="opacity-75">{level}</span>
+        </Badge>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{fgHex} on {bgHex}</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }

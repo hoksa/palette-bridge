@@ -1,5 +1,10 @@
 import type { PaletteConfig } from '../types'
 import { textColor } from '../lib/contrast'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 interface PaletteEditorProps {
   paletteConfig: PaletteConfig
@@ -25,15 +30,20 @@ export function PaletteEditor({ paletteConfig }: PaletteEditorProps) {
                 const sv = palette.shades[shade]
                 if (!sv) return null
                 return (
-                  <div
-                    key={shade}
-                    className="flex-1 min-w-0 h-10 rounded flex flex-col items-center justify-center text-[9px] leading-tight font-mono"
-                    style={{ backgroundColor: sv.hex, color: textColor(sv.hex) }}
-                    title={`${name}-${shade}: ${sv.hex}`}
-                  >
-                    <span className="font-semibold">{shade}</span>
-                    <span className="opacity-75 hidden sm:inline">{sv.hex}</span>
-                  </div>
+                  <Tooltip key={shade}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className="flex-1 min-w-0 h-10 rounded flex flex-col items-center justify-center text-[9px] leading-tight font-mono cursor-default"
+                        style={{ backgroundColor: sv.hex, color: textColor(sv.hex) }}
+                      >
+                        <span className="font-semibold">{shade}</span>
+                        <span className="opacity-75 hidden sm:inline">{sv.hex}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{name}-{shade}: {sv.hex}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 )
               })}
             </div>
