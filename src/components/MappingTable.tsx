@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type { AppState, AppAction, ContrastLevel, M3RoleName, RoleAssignments } from '../types'
 import { M3_ROLE_FAMILIES, getRolesByFamily } from '../data/m3-roles'
 import { resolveShadeRef } from '../lib/palette'
 import { ContrastBadge } from './ContrastBadge'
 import { ShadeSelector } from './ShadeSelector'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -74,42 +74,37 @@ export function MappingTable({ state, dispatch }: MappingTableProps) {
             Reset to defaults
           </Button>
         </div>
-
-        {/* All three TabsContent share the same table structure, just different data */}
-        {(['standard', 'medium', 'high'] as const).map(level => (
-          <TabsContent key={level} value={level}>
-            <div className="border rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-48">Role</TableHead>
-                    <TableHead className="w-28 text-center">Light</TableHead>
-                    <TableHead className="w-28 text-center">Dark</TableHead>
-                    <TableHead className="w-24 text-center">Light CR</TableHead>
-                    <TableHead className="w-24 text-center">Dark CR</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {M3_ROLE_FAMILIES.map(family => {
-                    const roles = getRolesByFamily(family)
-                    return (
-                      <FamilySection
-                        key={family}
-                        family={family}
-                        roles={roles}
-                        lightAssignments={lightAssignments}
-                        darkAssignments={darkAssignments}
-                        paletteConfig={paletteConfig}
-                        onShadeSelect={handleShadeSelect}
-                      />
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          </TabsContent>
-        ))}
       </Tabs>
+
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-48">Role</TableHead>
+              <TableHead className="w-28 text-center">Light</TableHead>
+              <TableHead className="w-28 text-center">Dark</TableHead>
+              <TableHead className="w-24 text-center">Light CR</TableHead>
+              <TableHead className="w-24 text-center">Dark CR</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {M3_ROLE_FAMILIES.map(family => {
+              const roles = getRolesByFamily(family)
+              return (
+                <FamilySection
+                  key={family}
+                  family={family}
+                  roles={roles}
+                  lightAssignments={lightAssignments}
+                  darkAssignments={darkAssignments}
+                  paletteConfig={paletteConfig}
+                  onShadeSelect={handleShadeSelect}
+                />
+              )
+            })}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
@@ -216,11 +211,13 @@ interface SwatchCellProps {
 }
 
 function SwatchCell({ hex, ref_, paletteConfig, onSelect }: SwatchCellProps) {
+  const [open, setOpen] = useState(false)
+
   if (!hex || !ref_) return <span className="text-muted-foreground text-xs">-</span>
 
   return (
     <div className="flex justify-center">
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -241,7 +238,10 @@ function SwatchCell({ hex, ref_, paletteConfig, onSelect }: SwatchCellProps) {
             paletteConfig={paletteConfig}
             currentPalette={ref_.palette}
             currentShade={ref_.shade}
-            onSelect={onSelect}
+            onSelect={(p, s) => {
+              onSelect(p, s)
+              setOpen(false)
+            }}
           />
         </PopoverContent>
       </Popover>
