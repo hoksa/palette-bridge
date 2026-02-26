@@ -2,7 +2,7 @@
  * M3 Color Role → Tailwind Shade assignment tables.
  *
  * Every shade value in this file derives from a positional correspondence
- * between M3's tonal palette (0–100, light-to-dark) and Tailwind's shade
+ * between M3's tonal palette (0–100, dark-to-light) and Tailwind's shade
  * scale (50–950, light-to-dark). For example, M3 tone 40 maps to Tailwind
  * shade 600 because both sit at ~60% of their respective scales.
  *
