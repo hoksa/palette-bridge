@@ -56,7 +56,7 @@ function App() {
       </header>
 
       <main className="max-w-[1600px] mx-auto px-6 py-6 space-y-6">
-        <PaletteEditor paletteConfig={state.paletteConfig} />
+        <PaletteEditor paletteConfig={state.paletteConfig} dispatch={dispatch} />
 
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6">
           <MappingTable state={state} dispatch={dispatch} />
