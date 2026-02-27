@@ -117,6 +117,13 @@ bfdbfe`
       const expected = oklchToHex(0.97, 0.01, 250)
       expect(result['50']).toBe(expected)
     })
+
+    it('normalizes percentage-based lightness oklch(97% 0.01 250) to 0.97', () => {
+      const input = '50: oklch(97% 0.01 250)'
+      const result = parsePaletteInput(input)
+      const expected = oklchToHex(0.97, 0.01, 250)
+      expect(result['50']).toBe(expected)
+    })
   })
 
   describe('edge cases', () => {
@@ -144,6 +151,18 @@ Another line that should be ignored`
       })
       expect(result).not.toHaveProperty('75')
       expect(result).not.toHaveProperty('150')
+    })
+
+    it('expands 3-digit hex shorthand (#fff → #ffffff)', () => {
+      const input = `#fff
+#000
+#abc`
+      const result = parsePaletteInput(input)
+      expect(result).toEqual({
+        '50': '#ffffff',
+        '100': '#000000',
+        '200': '#aabbcc',
+      })
     })
 
     it('whitespace is trimmed', () => {

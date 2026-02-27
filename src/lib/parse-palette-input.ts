@@ -6,11 +6,11 @@ const VALID_SHADES = new Set([
 
 const SHADE_ORDER = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950']
 
-// Matches oklch(L C h) with optional surrounding parens
-const OKLCH_RE = /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\)/
+// Matches oklch(L C h) with optional % on lightness
+const OKLCH_RE = /oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)\s*\)/
 
-// Matches hex color with or without #
-const HEX_RE = /^#?([0-9a-fA-F]{6})$/
+// Matches hex color with or without # (6-digit or 3-digit shorthand)
+const HEX_RE = /^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/
 
 /**
  * Resolve a color value string to a hex color.
@@ -22,9 +22,10 @@ function resolveColor(raw: string): string | null {
   // Try OKLCH
   const oklchMatch = trimmed.match(OKLCH_RE)
   if (oklchMatch) {
-    const L = parseFloat(oklchMatch[1])
-    const C = parseFloat(oklchMatch[2])
-    const h = parseFloat(oklchMatch[3])
+    let L = parseFloat(oklchMatch[1])
+    if (oklchMatch[2] === '%') L /= 100
+    const C = parseFloat(oklchMatch[3])
+    const h = parseFloat(oklchMatch[4])
     return oklchToHex(L, C, h)
   }
 
@@ -32,7 +33,12 @@ function resolveColor(raw: string): string | null {
   const unquoted = trimmed.replace(/^['"]/, '').replace(/['"]$/, '').trim()
   const hexMatch = unquoted.match(HEX_RE)
   if (hexMatch) {
-    return '#' + hexMatch[1].toLowerCase()
+    let hex = hexMatch[1].toLowerCase()
+    // Expand 3-digit shorthand: abc → aabbcc
+    if (hex.length === 3) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
+    }
+    return '#' + hex
   }
 
   return null
