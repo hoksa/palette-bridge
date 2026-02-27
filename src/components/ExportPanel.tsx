@@ -97,11 +97,11 @@ export function ExportPanel({ state, dispatch }: ExportPanelProps) {
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-white p-4 space-y-4">
-      <h2 className="text-lg font-semibold text-gray-700">Export</h2>
+    <div className="border border-border rounded-lg bg-background p-4 space-y-4">
+      <h2 className="text-lg font-semibold text-foreground">Export</h2>
 
       <div className="flex items-center gap-2">
-        <Label htmlFor="kotlin-package" className="text-sm text-gray-500 shrink-0">
+        <Label htmlFor="kotlin-package" className="text-sm text-muted-foreground shrink-0">
           Kotlin package:
         </Label>
         <Input

@@ -225,7 +225,7 @@ function SwatchCell({ hex, ref_, paletteConfig, onSelect }: SwatchCellProps) {
             className="h-auto px-1.5 py-0.5 gap-1.5"
           >
             <div
-              className="w-5 h-5 rounded-sm border border-black/10"
+              className="w-5 h-5 rounded-sm border border-border"
               style={{ backgroundColor: hex }}
             />
             <span className="text-[10px] font-mono text-muted-foreground">
