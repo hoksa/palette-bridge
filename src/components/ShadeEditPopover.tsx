@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import {
   Popover,
   PopoverContent,
@@ -19,12 +19,13 @@ export function ShadeEditPopover({ hex, onSave, children }: ShadeEditPopoverProp
   const [value, setValue] = useState(hex)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    if (open) {
+  function handleOpenChange(isOpen: boolean) {
+    setOpen(isOpen)
+    if (isOpen) {
       setValue(hex)
       setTimeout(() => inputRef.current?.select(), 0)
     }
-  }, [open, hex])
+  }
 
   function commit() {
     const normalized = value.startsWith('#') ? value : `#${value}`
@@ -38,7 +39,7 @@ export function ShadeEditPopover({ hex, onSave, children }: ShadeEditPopoverProp
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         {children}
       </PopoverTrigger>
