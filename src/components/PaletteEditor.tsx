@@ -48,12 +48,11 @@ export function PaletteEditor({ paletteConfig, dispatch }: PaletteEditorProps) {
                 const sv = palette.shades[shade]
                 if (!sv) return null
                 return (
-                  <ShadeEditPopover
-                    key={shade}
-                    hex={sv.hex}
-                    onSave={(newHex) => updateShade(name, shade, newHex)}
-                  >
-                    <Tooltip>
+                  <Tooltip key={shade}>
+                    <ShadeEditPopover
+                      hex={sv.hex}
+                      onSave={(newHex) => updateShade(name, shade, newHex)}
+                    >
                       <TooltipTrigger asChild>
                         <div
                           className="flex-1 min-w-0 h-10 rounded-sm flex flex-col items-center justify-center text-[9px] leading-tight font-mono cursor-pointer hover:ring-2 hover:ring-ring hover:ring-offset-1"
@@ -63,11 +62,11 @@ export function PaletteEditor({ paletteConfig, dispatch }: PaletteEditorProps) {
                           <span className="opacity-75 hidden sm:inline">{sv.hex}</span>
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{name}-{shade}: {sv.hex}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </ShadeEditPopover>
+                    </ShadeEditPopover>
+                    <TooltipContent>
+                      <p>{name}-{shade}: {sv.hex}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 )
               })}
             </div>
