@@ -76,6 +76,7 @@ describe('generateMaterialJson', () => {
     expect(parsed.palettes).toHaveProperty('tertiary')
     expect(parsed.palettes).toHaveProperty('neutral')
     expect(parsed.palettes).toHaveProperty('neutral-variant')
+    expect(parsed.palettes).not.toHaveProperty('error')
   })
 
   it('palette hex values are uppercase with # prefix', () => {
