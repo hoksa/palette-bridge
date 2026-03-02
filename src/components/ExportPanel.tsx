@@ -4,6 +4,7 @@ import { generateColorKt, generateThemeKt } from '../lib/export-kotlin'
 import { generateMaterialJson } from '../lib/export-material-json'
 import { generateTokensStudio } from '../lib/export-tokens-studio'
 import { generateCss } from '../lib/export-css'
+import { generateStyleframeJson } from '../lib/export-styleframe'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -51,6 +52,11 @@ export function ExportPanel({ state, dispatch }: ExportPanelProps) {
   function exportCss() {
     const css = generateCss(paletteConfig, themeMapping)
     download('theme.css', css, 'text/css')
+  }
+
+  function exportStyleframe() {
+    const json = generateStyleframeJson(paletteConfig, themeMapping)
+    download('styleframe-tokens.json', json, 'application/json')
   }
 
   function exportMapping() {
@@ -118,6 +124,7 @@ export function ExportPanel({ state, dispatch }: ExportPanelProps) {
         <ExportButton label="Material JSON" description="material-theme.json" onClick={exportMaterialJson} />
         <ExportButton label="Tokens Studio" description="core + light + dark JSON" onClick={exportTokensStudio} />
         <ExportButton label="CSS" description="Custom properties" onClick={exportCss} />
+        <ExportButton label="Styleframe" description="DTCG tokens for Figma" onClick={exportStyleframe} />
         <ExportButton label="Mapping" description="Save current state" onClick={exportMapping} />
         <ExportButton label="Import" description="Load mapping file" onClick={importMapping} variant="secondary" />
       </div>

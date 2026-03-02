@@ -1,33 +1,7 @@
 import type { PaletteConfig, ThemeMapping, RoleAssignments, M3RoleName } from '../types'
 import { resolveShadeRef } from '../lib/palette'
 import { ALL_M3_ROLES } from '../data/m3-roles'
-
-/** Maps Tailwind shade names to M3 tone values. Inverse of the mapping in docs/tone-shade-mapping.md */
-const SHADE_TO_TONE: Record<string, string> = {
-  'black': '0',
-  '950': '0',
-  '900': '10',
-  '800': '20',
-  '700': '30',
-  '600': '40',
-  '500': '50',
-  '400': '60',
-  '300': '70',
-  '200': '80',
-  '100': '90',
-  '50': '95',
-  'white': '100',
-}
-
-/** Missing M3 tones mapped to nearest available tone (nearest-neighbor fill) */
-const NEAREST_TONE_FILL: Record<string, string> = {
-  '5': '0',
-  '15': '10',
-  '25': '20',
-  '35': '30',
-  '98': '100',
-  '99': '100',
-}
+import { buildTonalPalette } from './palette-tones'
 
 /**
  * MTB role order — matches the exact insertion order from Material Theme Builder exports.
@@ -100,42 +74,14 @@ function buildPalettes(config: PaletteConfig): Record<string, Record<string, str
   }
 
   for (const [sourceName, targetNames] of Object.entries(familyMap)) {
-    const palette = config.palettes[sourceName]
-    if (!palette) continue
-
-    const tones: Record<string, string> = {}
-    for (const [shade, value] of Object.entries(palette.shades)) {
-      const tone = SHADE_TO_TONE[shade]
-      if (tone !== undefined) {
-        tones[tone] = toUpperHex(value.hex)
-      }
+    const tones = buildTonalPalette(config, sourceName)
+    // Normalize to uppercase hex for MTB format
+    const upper: Record<string, string> = {}
+    for (const [tone, hex] of Object.entries(tones)) {
+      upper[tone] = toUpperHex(hex)
     }
-    // Include interpolated shades converted to tones
-    const interpolated = config.interpolated?.[sourceName]
-    if (interpolated) {
-      for (const [shade, value] of Object.entries(interpolated)) {
-        const tone = SHADE_TO_TONE[shade]
-        if (tone !== undefined) {
-          tones[tone] = toUpperHex(value.hex)
-        }
-      }
-    }
-
-    // Fill missing MTB tones with nearest available tone
-    for (const [missingTone, nearestTone] of Object.entries(NEAREST_TONE_FILL)) {
-      if (!(missingTone in tones) && nearestTone in tones) {
-        tones[missingTone] = tones[nearestTone]
-      }
-    }
-
-    // Output tones in numeric order for consistent JSON
-    const sorted: Record<string, string> = {}
-    for (const key of Object.keys(tones).sort((a, b) => Number(a) - Number(b))) {
-      sorted[key] = tones[key]
-    }
-
     for (const targetName of targetNames) {
-      palettes[targetName] = { ...sorted }
+      palettes[targetName] = { ...upper }
     }
   }
 
