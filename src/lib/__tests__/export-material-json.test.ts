@@ -16,6 +16,10 @@ describe('generateMaterialJson', () => {
     expect(parsed).not.toHaveProperty('source')
   })
 
+  it('description starts with TYPE: CUSTOM', () => {
+    expect(parsed.description).toMatch(/^TYPE: CUSTOM/)
+  })
+
   it('seed is the primary palette shade-600 hex', () => {
     expect(parsed.seed).toMatch(/^#[0-9A-F]{6}$/)
     expect(parsed.seed).toBe('#2563EB')
@@ -51,23 +55,36 @@ describe('generateMaterialJson', () => {
     expect(parsed.schemes.light).toHaveProperty('primaryFixed')
   })
 
+  it('scheme roles are in MTB order (surfaceTint after primary)', () => {
+    const roles = Object.keys(parsed.schemes.light)
+    expect(roles[0]).toBe('primary')
+    expect(roles[1]).toBe('surfaceTint')
+    expect(roles[2]).toBe('onPrimary')
+  })
+
   it('uses uppercase hex values with # prefix in schemes', () => {
     expect(parsed.schemes.light.primary).toMatch(/^#[0-9A-F]{6}$/)
   })
 
-  it('palettes use M3 tone keys (0-100) not Tailwind shade keys', () => {
+  it('palettes have all 18 MTB tone stops', () => {
     const toneKeys = Object.keys(parsed.palettes.primary)
-    // Must have M3 tone numbers, not Tailwind shade names
-    expect(toneKeys).toContain('0')
-    expect(toneKeys).toContain('10')
-    expect(toneKeys).toContain('40')
-    expect(toneKeys).toContain('90')
-    expect(toneKeys).toContain('100')
+    const expectedTones = ['0', '5', '10', '15', '20', '25', '30', '35', '40', '50', '60', '70', '80', '90', '95', '98', '99', '100']
+    for (const tone of expectedTones) {
+      expect(toneKeys).toContain(tone)
+    }
+    expect(toneKeys).toHaveLength(18)
     // Must NOT have Tailwind shade names
-    expect(toneKeys).toContain('50')  // M3 tone 50, mapped from Tailwind shade 500
     expect(toneKeys).not.toContain('200')
     expect(toneKeys).not.toContain('white')
     expect(toneKeys).not.toContain('black')
+  })
+
+  it('palette tones are in numeric order', () => {
+    const toneKeys = Object.keys(parsed.palettes.primary)
+    const asNumbers = toneKeys.map(Number)
+    for (let i = 1; i < asNumbers.length; i++) {
+      expect(asNumbers[i]).toBeGreaterThan(asNumbers[i - 1])
+    }
   })
 
   it('palettes include MTB families: primary, secondary, tertiary, neutral, neutral-variant', () => {

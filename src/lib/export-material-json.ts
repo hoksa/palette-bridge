@@ -1,4 +1,4 @@
-import type { PaletteConfig, ThemeMapping, RoleAssignments } from '../types'
+import type { PaletteConfig, ThemeMapping, RoleAssignments, M3RoleName } from '../types'
 import { resolveShadeRef } from '../lib/palette'
 import { ALL_M3_ROLES } from '../data/m3-roles'
 
@@ -19,6 +19,37 @@ const SHADE_TO_TONE: Record<string, string> = {
   'white': '100',
 }
 
+/** Missing M3 tones mapped to nearest available tone (nearest-neighbor fill) */
+const NEAREST_TONE_FILL: Record<string, string> = {
+  '5': '0',
+  '15': '10',
+  '25': '20',
+  '35': '30',
+  '98': '100',
+  '99': '100',
+}
+
+/**
+ * MTB role order — matches the exact insertion order from Material Theme Builder exports.
+ * JSON is technically unordered, but MTB may rely on insertion order.
+ */
+const MTB_ROLE_ORDER: M3RoleName[] = [
+  'primary', 'surfaceTint', 'onPrimary', 'primaryContainer', 'onPrimaryContainer',
+  'secondary', 'onSecondary', 'secondaryContainer', 'onSecondaryContainer',
+  'tertiary', 'onTertiary', 'tertiaryContainer', 'onTertiaryContainer',
+  'error', 'onError', 'errorContainer', 'onErrorContainer',
+  'background', 'onBackground',
+  'surface', 'onSurface', 'surfaceVariant', 'onSurfaceVariant',
+  'outline', 'outlineVariant', 'shadow', 'scrim',
+  'inverseSurface', 'inverseOnSurface', 'inversePrimary',
+  'primaryFixed', 'onPrimaryFixed', 'primaryFixedDim', 'onPrimaryFixedVariant',
+  'secondaryFixed', 'onSecondaryFixed', 'secondaryFixedDim', 'onSecondaryFixedVariant',
+  'tertiaryFixed', 'onTertiaryFixed', 'tertiaryFixedDim', 'onTertiaryFixedVariant',
+  'surfaceDim', 'surfaceBright',
+  'surfaceContainerLowest', 'surfaceContainerLow', 'surfaceContainer',
+  'surfaceContainerHigh', 'surfaceContainerHighest',
+]
+
 function toUpperHex(hex: string): string {
   return hex.startsWith('#')
     ? '#' + hex.slice(1).toUpperCase()
@@ -30,12 +61,25 @@ function resolveScheme(
   assignments: RoleAssignments,
 ): Record<string, string> {
   const scheme: Record<string, string> = {}
-  for (const role of ALL_M3_ROLES) {
+  // Use MTB role order for consistent insertion order
+  for (const role of MTB_ROLE_ORDER) {
     const ref = assignments[role]
     if (ref) {
       const hex = resolveShadeRef(config, ref)
       if (hex) {
         scheme[role] = toUpperHex(hex)
+      }
+    }
+  }
+  // Include any roles not in MTB_ROLE_ORDER (future-proofing)
+  for (const role of ALL_M3_ROLES) {
+    if (!(role in scheme)) {
+      const ref = assignments[role]
+      if (ref) {
+        const hex = resolveShadeRef(config, ref)
+        if (hex) {
+          scheme[role] = toUpperHex(hex)
+        }
       }
     }
   }
@@ -77,8 +121,21 @@ function buildPalettes(config: PaletteConfig): Record<string, Record<string, str
       }
     }
 
+    // Fill missing MTB tones with nearest available tone
+    for (const [missingTone, nearestTone] of Object.entries(NEAREST_TONE_FILL)) {
+      if (!(missingTone in tones) && nearestTone in tones) {
+        tones[missingTone] = tones[nearestTone]
+      }
+    }
+
+    // Output tones in numeric order for consistent JSON
+    const sorted: Record<string, string> = {}
+    for (const key of Object.keys(tones).sort((a, b) => Number(a) - Number(b))) {
+      sorted[key] = tones[key]
+    }
+
     for (const targetName of targetNames) {
-      palettes[targetName] = { ...tones }
+      palettes[targetName] = { ...sorted }
     }
   }
 
@@ -111,7 +168,7 @@ export function generateMaterialJson(
   }
 
   const output = {
-    description: 'Palette Bridge export',
+    description: 'TYPE: CUSTOM\nPalette Bridge export',
     seed,
     coreColors,
     extendedColors: [] as unknown[],
