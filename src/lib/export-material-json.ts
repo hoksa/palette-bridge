@@ -43,20 +43,44 @@ function resolveScheme(
 
 function buildPalettes(config: PaletteConfig): Record<string, Record<string, string>> {
   const palettes: Record<string, Record<string, string>> = {}
-  for (const [name, palette] of Object.entries(config.palettes)) {
-    const shades: Record<string, string> = {}
-    for (const [key, value] of Object.entries(palette.shades)) {
-      shades[key] = toUpperHex(value.hex)
-    }
-    // Include interpolated shades if present
-    const interpolated = config.interpolated?.[name]
-    if (interpolated) {
-      for (const [key, value] of Object.entries(interpolated)) {
-        shades[key] = toUpperHex(value.hex)
+
+  // MTB expects: primary, secondary, tertiary, neutral, neutral-variant
+  // We have: primary, secondary, tertiary, error, neutral
+  // Map neutral to both 'neutral' and 'neutral-variant'; exclude 'error'
+  const familyMap: Record<string, string[]> = {
+    primary: ['primary'],
+    secondary: ['secondary'],
+    tertiary: ['tertiary'],
+    neutral: ['neutral', 'neutral-variant'],
+  }
+
+  for (const [sourceName, targetNames] of Object.entries(familyMap)) {
+    const palette = config.palettes[sourceName]
+    if (!palette) continue
+
+    const tones: Record<string, string> = {}
+    for (const [shade, value] of Object.entries(palette.shades)) {
+      const tone = SHADE_TO_TONE[shade]
+      if (tone !== undefined) {
+        tones[tone] = toUpperHex(value.hex)
       }
     }
-    palettes[name] = shades
+    // Include interpolated shades converted to tones
+    const interpolated = config.interpolated?.[sourceName]
+    if (interpolated) {
+      for (const [shade, value] of Object.entries(interpolated)) {
+        const tone = SHADE_TO_TONE[shade]
+        if (tone !== undefined) {
+          tones[tone] = toUpperHex(value.hex)
+        }
+      }
+    }
+
+    for (const targetName of targetNames) {
+      palettes[targetName] = { ...tones }
+    }
   }
+
   return palettes
 }
 
