@@ -64,7 +64,7 @@ describe('generateMaterialJson', () => {
     expect(toneKeys).toContain('90')
     expect(toneKeys).toContain('100')
     // Must NOT have Tailwind shade names
-    expect(toneKeys).not.toContain('50')  // '50' is a Tailwind shade; M3 tone 50 maps from shade 500
+    expect(toneKeys).toContain('50')  // M3 tone 50, mapped from Tailwind shade 500
     expect(toneKeys).not.toContain('200')
     expect(toneKeys).not.toContain('white')
     expect(toneKeys).not.toContain('black')
