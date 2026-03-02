@@ -97,9 +97,23 @@ export function generateMaterialJson(
     'dark-high-contrast': resolveScheme(config, mapping.highContrast.dark),
   }
 
+  // seed = primary palette's shade 600 (tone 40, the "source" color)
+  const seed = toUpperHex(config.palettes.primary?.shades['600']?.hex ?? '#000000')
+
+  // coreColors = tone 40 (shade 600) for each MTB palette family
+  const coreColors: Record<string, string> = {
+    primary: toUpperHex(config.palettes.primary?.shades['600']?.hex ?? '#000000'),
+    secondary: toUpperHex(config.palettes.secondary?.shades['600']?.hex ?? '#000000'),
+    tertiary: toUpperHex(config.palettes.tertiary?.shades['600']?.hex ?? '#000000'),
+    neutral: toUpperHex(config.palettes.neutral?.shades['600']?.hex ?? '#000000'),
+    neutralVariant: toUpperHex(config.palettes.neutral?.shades['600']?.hex ?? '#000000'),
+  }
+
   const output = {
     description: 'Palette Bridge export',
-    source: 'palette-bridge',
+    seed,
+    coreColors,
+    extendedColors: [] as unknown[],
     schemes,
     palettes: buildPalettes(config),
   }
