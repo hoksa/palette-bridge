@@ -2,6 +2,22 @@ import type { PaletteConfig, ThemeMapping, RoleAssignments } from '../types'
 import { resolveShadeRef } from '../lib/palette'
 import { ALL_M3_ROLES } from '../data/m3-roles'
 
+/** Maps Tailwind shade names to M3 tone values. Inverse of the mapping in docs/tone-shade-mapping.md */
+const SHADE_TO_TONE: Record<string, string> = {
+  'black': '0',
+  '950': '0',
+  '900': '10',
+  '800': '20',
+  '700': '30',
+  '600': '40',
+  '400': '60',
+  '300': '70',
+  '200': '80',
+  '100': '90',
+  '50': '95',
+  'white': '100',
+}
+
 function toUpperHex(hex: string): string {
   return hex.startsWith('#')
     ? '#' + hex.slice(1).toUpperCase()
