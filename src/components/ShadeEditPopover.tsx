@@ -18,24 +18,29 @@ export function ShadeEditPopover({ hex, onSave, children }: ShadeEditPopoverProp
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState(hex)
   const inputRef = useRef<HTMLInputElement>(null)
+  const cancelledRef = useRef(false)
 
   function handleOpenChange(isOpen: boolean) {
     setOpen(isOpen)
     if (isOpen) {
+      cancelledRef.current = false
       setValue(hex)
       setTimeout(() => inputRef.current?.select(), 0)
     }
   }
 
   function commit() {
+    if (cancelledRef.current) return
     const normalized = value.startsWith('#') ? value : `#${value}`
     if (HEX_RE.test(normalized)) {
       onSave(normalized.toLowerCase())
-      setOpen(false)
-    } else {
-      setValue(hex)
-      setOpen(false)
     }
+    setOpen(false)
+  }
+
+  function cancel() {
+    cancelledRef.current = true
+    setOpen(false)
   }
 
   return (
@@ -50,7 +55,7 @@ export function ShadeEditPopover({ hex, onSave, children }: ShadeEditPopoverProp
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') commit()
-            if (e.key === 'Escape') setOpen(false)
+            if (e.key === 'Escape') cancel()
           }}
           onBlur={commit}
           className="h-8 text-xs font-mono"
