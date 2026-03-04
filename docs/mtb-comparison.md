@@ -2,6 +2,14 @@
 
 This document describes how Palette Bridge's color pipeline differs from Material Theme Builder (MTB) and what that means for teams using the Material 3 Design Kit in Figma alongside Palette Bridge exports in code.
 
+## Core design principle: no processing between input and output
+
+Palette Bridge has a direct, transparent pipeline: the colors you paste into the palette swatches are the exact colors that end up in the exported M3 variables. There is no post-processing, no behind-the-scenes blending, and no derived color generation. Every M3 role resolves to a specific shade from a specific palette — the hex value the user provided is the hex value in the export.
+
+This means if a user wants surface colors to carry a tint of their primary color, they build that into the neutral palette itself — for example, by providing a custom neutral scale with a warm or cool undertone baked in. Palette Bridge will faithfully assign those shades to surface roles without modifying them. The tool maps; it does not transform.
+
+This is a deliberate design decision. It gives users full control and complete predictability: changing the primary palette never silently shifts surface colors, and the exported theme is always auditable back to the source palettes.
+
 ## How MTB generates colors
 
 MTB uses Google's [material-color-utilities](https://github.com/material-foundation/material-color-utilities) library, which operates in the HCT color space (Hue, Chroma, Tone). From a single seed color it generates five tonal palettes:
@@ -16,16 +24,14 @@ MTB uses Google's [material-color-utilities](https://github.com/material-foundat
 
 The critical detail: **neutral palettes inherit the seed color's hue** at very low chroma. A blue primary produces neutrals with a subtle cool-blue wash. An orange primary produces warm-tinted neutrals. Surface roles (`surface`, `surfaceDim`, `surfaceContainer*`, etc.) draw from the neutral palette (n1), so they always carry a faint tint of the primary color.
 
-## How Palette Bridge generates colors
+## How Palette Bridge maps colors
 
-Palette Bridge does not generate palettes from a seed. Instead, it takes **user-provided Tailwind CSS palettes** as direct input:
+Palette Bridge does not generate palettes from a seed. It takes **user-provided Tailwind CSS palettes** as direct input and maps them straight to M3 roles:
 
 1. The user supplies complete shade scales for each palette family (primary, secondary, tertiary, error, neutral).
-2. Surface roles map directly to shades from the neutral palette — e.g., `surface` → `neutral.50`, `surfaceContainer` → `neutral.100`.
-3. OKLCH interpolation generates intermediate shades between existing ones within the same palette. It does not blend across palettes.
-4. At export time, each role resolves to a hex value via direct lookup: role → (palette name, shade) → hex.
-
-**No tinting is applied.** Surface colors are exactly the neutral shades the user provided.
+2. Each M3 role is assigned to a specific palette and shade — e.g., `surface` → `neutral.50`, `primary` → `primary.600`.
+3. At export time, each role resolves to a hex value via direct lookup: role → (palette name, shade) → hex from the user's input.
+4. OKLCH interpolation can generate intermediate shades between existing ones within the same palette when finer granularity is needed. It does not blend across palettes.
 
 ## The difference in practice
 
@@ -66,13 +72,7 @@ To align Figma with Palette Bridge exports:
 
 ### Why Palette Bridge does not add tinting
 
-Palette Bridge is designed for teams that have already established their brand color system in Tailwind CSS. These teams have intentionally chosen their neutral scale (e.g. slate, zinc, gray) as part of their brand identity. Injecting a primary-derived tint would:
-
-- Override a deliberate brand decision about neutral tone
-- Create a hidden dependency between the primary palette and all surface colors
-- Make the output less predictable — changing the primary color would silently shift every surface
-
-The trade-off is that users must ensure their palettes harmonize with each other, which MTB handles automatically. For brand-first workflows where the neutral scale is a conscious design choice, this is the intended behavior.
+This follows from the core principle: Palette Bridge maps, it does not transform. Users who want tinted surfaces can build that tint into their neutral palette — the tool will faithfully pass those values through. The trade-off is that users must ensure their palettes harmonize with each other, which MTB handles automatically. For brand-first workflows where the neutral scale is a conscious design choice, this is the intended behavior.
 
 ## Related docs
 
