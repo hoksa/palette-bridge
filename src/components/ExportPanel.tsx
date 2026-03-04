@@ -2,8 +2,6 @@ import { useState, useRef } from 'react'
 import type { AppState, AppAction } from '../types'
 import { generateColorKt, generateThemeKt } from '../lib/export-kotlin'
 import { generateMaterialJson } from '../lib/export-material-json'
-import { generateTokensStudio } from '../lib/export-tokens-studio'
-import { generateCss } from '../lib/export-css'
 import { generateStyleframeJson } from '../lib/export-styleframe'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -40,18 +38,6 @@ export function ExportPanel({ state, dispatch }: ExportPanelProps) {
   function exportMaterialJson() {
     const json = generateMaterialJson(paletteConfig, themeMapping)
     download('material-theme.json', json, 'application/json')
-  }
-
-  function exportTokensStudio() {
-    const tokens = generateTokensStudio(paletteConfig, themeMapping)
-    download('core.json', tokens.core, 'application/json')
-    setTimeout(() => download('light.json', tokens.light, 'application/json'), 100)
-    setTimeout(() => download('dark.json', tokens.dark, 'application/json'), 200)
-  }
-
-  function exportCss() {
-    const css = generateCss(paletteConfig, themeMapping)
-    download('theme.css', css, 'text/css')
   }
 
   function exportStyleframe() {
@@ -122,8 +108,6 @@ export function ExportPanel({ state, dispatch }: ExportPanelProps) {
       <div className="flex flex-wrap gap-2">
         <ExportButton label="Kotlin" description="Color.kt + Theme.kt" onClick={exportKotlin} />
         <ExportButton label="Material JSON" description="material-theme.json" onClick={exportMaterialJson} />
-        <ExportButton label="Tokens Studio" description="core + light + dark JSON" onClick={exportTokensStudio} />
-        <ExportButton label="CSS" description="Custom properties" onClick={exportCss} />
         <ExportButton label="Styleframe" description="DTCG tokens for Figma" onClick={exportStyleframe} />
         <ExportButton label="Mapping" description="Save current state" onClick={exportMapping} />
         <ExportButton label="Import" description="Load mapping file" onClick={importMapping} variant="secondary" />
