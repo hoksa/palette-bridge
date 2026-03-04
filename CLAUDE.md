@@ -55,5 +55,5 @@ Hex (sRGB) → OKLCH interpolation for shade generation → WCAG contrast ratios
 - **M3 roles**: 66 Material Design 3 semantic color roles across 6 families (primary, secondary, tertiary, error, surface, other)
 - **Contrast levels**: Standard, Medium, High — each with independent shade mappings
 - **Theme modes**: Light and Dark with separate role assignments
-- **Export formats**: Kotlin (Color.kt + Theme.kt), Material JSON, Tokens Studio (DTCG), CSS custom properties
+- **Export formats**: Kotlin (Color.kt + Theme.kt), Material JSON, Styleframe (DTCG for Figma)
 - **Tone-shade mapping**: See `docs/tone-shade-mapping.md` for the foundational logic mapping M3 tonal values to Tailwind shades — this drives all default role assignments in `src/data/contrast-shifts.ts`
