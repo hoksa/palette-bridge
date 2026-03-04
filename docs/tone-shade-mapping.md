@@ -88,6 +88,10 @@ Higher contrast increases the gap between foreground and background:
 - **Palette quality matters.** This mapping assumes the input palette has shades that darken in roughly even perceptual steps. Poorly constructed palettes (e.g. with uneven lightness jumps) will produce worse results.
 - **All defaults are overridable.** Every assignment can be changed by the user in the UI. These defaults are a starting point informed by M3's spec, not an authoritative output.
 
+## Comparison with Material Theme Builder
+
+Palette Bridge's approach differs fundamentally from Material Theme Builder (MTB). MTB generates all tonal palettes — including neutrals — from a single seed color using the HCT color space, which means surface colors carry a subtle tint of the primary hue. Palette Bridge uses user-provided palettes directly with no cross-palette tinting. See [MTB comparison](./mtb-comparison.md) for full details and Figma alignment guidance.
+
 ## Mutability
 
 This mapping can and should be refined if better correspondences are found. It is codified as a reference point, not as a permanent constraint. Changes should be made in `src/data/contrast-shifts.ts` and this document updated to match.
